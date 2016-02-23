@@ -1,0 +1,24 @@
+<resources>
+    <string name="app_name">Nice Move</string>
+
+    <string name="title_section1">Copy - Delete</string>
+    <string name="title_section2">TBC</string>
+    <string name="title_section3">TBC</string>
+
+    <string name="folder_hint">Folder...</string>
+    <string name="browse_button">Browse</string>
+    <string name="delete_button">Delete</string>
+    <string name="copy_button">Copy</string>
+
+    <string name="progress_title">Copying...</string>
+
+    <string name="result_ok">Done</string>
+    <string name="result_er">Error</string>
+
+    <string name="navigation_drawer_open">Open navigation drawer</string>
+    <string name="navigation_drawer_close">Close navigation drawer</string>
+
+    <string name="action_example">Example action</string>
+
+    <string name="action_settings">Settings</string>
+</resources>
