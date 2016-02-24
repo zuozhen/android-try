@@ -21,4 +21,9 @@
     <string name="action_example">Example action</string>
 
     <string name="action_settings">Settings</string>
+
+    <string name="password_hint">请绘制手势密码</string>
+    <string name="password_repaint">重绘</string>
+    <string name="password_save">保存</string>
+    <string name="password_set">设置手势密码</string>
 </resources>

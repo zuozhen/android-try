@@ -1,5 +1,6 @@
 package com.zzdev.nicemove;
 
+import android.app.Activity;
 import android.app.ProgressDialog;
 import android.os.AsyncTask;
 import android.widget.Toast;
@@ -18,9 +19,9 @@ public class AsyncTaskCopy extends AsyncTask<String, Integer, Boolean> {
     /** progress dialog to show user that the background job is processing. */
     private ProgressDialog dialog;
     /** application context. */
-    private MainActivity activity;
+    private Activity activity;
 
-    public AsyncTaskCopy(MainActivity activity) {
+    public AsyncTaskCopy(Activity activity) {
         this.activity = activity;
         dialog = new ProgressDialog(activity);
     }
