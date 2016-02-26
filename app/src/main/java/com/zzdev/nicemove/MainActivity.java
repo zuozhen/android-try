@@ -49,11 +49,6 @@ public class MainActivity extends ActionBarActivity
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
         sharedPref = this.getPreferences(Context.MODE_PRIVATE);
-
-//        LayoutInflater inflater = LayoutInflater.from(this);
-//        view = inflater.inflate(R.layout.fragment_one, container, false);
-//        etSrcFolder = (EditText) findViewById(R.id.editText);
-//        etDstFolder = (EditText) findViewById(R.id.editText2);
     }
 
     @Override
@@ -67,6 +62,9 @@ public class MainActivity extends ActionBarActivity
                 break;
             case 1:
                 fg = new FragmentTwo();
+                break;
+            case 2:
+                fg = new FragmentThree();
                 break;
         }
         fragmentManager.beginTransaction()
