@@ -1,6 +1,7 @@
 package com.zzdev.nicemove;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -10,8 +11,9 @@ import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.EditText;
+
+import com.gusturelock.LockActivity;
+import com.gusturelock.LockSetupActivity;
 
 
 public class MainActivity extends ActionBarActivity
@@ -26,13 +28,10 @@ public class MainActivity extends ActionBarActivity
      * Used to store the last screen title. For use in {@link #restoreActionBar()}.
      */
     private CharSequence mTitle;
-
-    private static EditText etSrcFolder;
-    private static EditText etDstFolder;
-    private static View view;
     private static SharedPreferences sharedPref;
-
-
+    public static final String LOCK = "lock";
+    public static final String LOCK_KEY = "lock_key";
+    public static final String REMOVE_PASSWORD = "remove";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -48,7 +47,13 @@ public class MainActivity extends ActionBarActivity
                 R.id.navigation_drawer,
                 (DrawerLayout) findViewById(R.id.drawer_layout));
 
-        sharedPref = this.getPreferences(Context.MODE_PRIVATE);
+        sharedPref = getSharedPreferences(LOCK, Context.MODE_PRIVATE);
+        String lockPattenString = sharedPref.getString(LOCK_KEY, null);
+
+        if (lockPattenString != null) {
+            Intent intent = new Intent(this, LockActivity.class);
+            startActivity(intent);
+        }
     }
 
     @Override
@@ -119,6 +124,15 @@ public class MainActivity extends ActionBarActivity
         if (id == R.id.action_settings) {
             return true;
         }
+        if (id == R.id.action_set_password) {
+            startActivity(new Intent(this, LockSetupActivity.class));
+            return true;
+        }
+        if (id == R.id.action_unset_password) {
+            Intent it = new Intent(this, LockActivity.class);
+            it.putExtra(REMOVE_PASSWORD, true);
+            startActivity(it);
+        }
 
         return super.onOptionsItemSelected(item);
     }
@@ -126,61 +140,5 @@ public class MainActivity extends ActionBarActivity
     @Override
     protected void onStop() {
         super.onStop();
-
-//        SharedPreferences.Editor ed = sharedPref.edit();
-//        ed.putString("srcFolder", etSrcFolder.getText().toString());
-//        ed.putString("dstFolder", etDstFolder.getText().toString());
-//        ed.apply();
     }
-
-    /**
-     * A placeholder fragment containing a simple view.
-     */
-//    public static class PlaceholderFragment extends Fragment {
-//        /**
-//         * The fragment argument representing the section number for this
-//         * fragment.
-//         */
-//        private static final String ARG_SECTION_NUMBER = "section_number";
-//
-//        /**
-//         * Returns a new instance of this fragment for the given section
-//         * number.
-//         */
-//        public static PlaceholderFragment newInstance(int sectionNumber) {
-//            PlaceholderFragment fragment = new PlaceholderFragment();
-//            Bundle args = new Bundle();
-//            args.putInt(ARG_SECTION_NUMBER, sectionNumber);
-//            fragment.setArguments(args);
-//            return fragment;
-//        }
-//
-//        public PlaceholderFragment() {
-//        }
-//
-//        @Override
-//        public View onCreateView(LayoutInflater inflater, ViewGroup container,
-//                                 Bundle savedInstanceState) {
-//            View rootView = inflater.inflate(R.layout.fragment_main, container, false);
-//
-//            etSrcFolder = (EditText) rootView.findViewById(R.id.editText);
-//            etDstFolder = (EditText) rootView.findViewById(R.id.editText2);
-//            sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
-//            String srcFolder = sharedPref.getString("srcFolder", getString(R.string.folder_hint));
-//            String dstFolder = sharedPref.getString("dstFolder", getString(R.string.folder_hint));
-//            etSrcFolder.setText(srcFolder);
-//            etDstFolder.setText(dstFolder);
-//
-//            return rootView;
-//        }
-//
-//        @Override
-//        public void onAttach(Activity activity) {
-//            super.onAttach(activity);
-//            ((MainActivity) activity).onSectionAttached(
-//                    getArguments().getInt(ARG_SECTION_NUMBER));
-//        }
-//    }
-
-
 }

@@ -1,0 +1,46 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".MainActivity" >
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="@string/set_hint"
+        android:layout_marginTop="20dp"
+        android:id="@+id/set_hint"
+        android:layout_alignParentTop="true"
+        android:layout_centerHorizontal="true" />
+
+    <com.gusturelock.LockPatternView
+        android:id="@+id/lock_pattern"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_centerVertical="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true" />
+
+    <Button
+        android:layout_width="150dip"
+        android:layout_height="wrap_content"
+        android:text="@string/cancel"
+        android:id="@+id/left_btn"
+        android:layout_marginLeft="15dp"
+        android:layout_alignParentBottom="true" />
+
+    <Button
+        android:layout_width="150dip"
+        android:layout_height="wrap_content"
+        android:text="@string/goon"
+        android:id="@+id/right_btn"
+        android:layout_marginRight="15dp"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentEnd="true" />
+
+
+
+</RelativeLayout>

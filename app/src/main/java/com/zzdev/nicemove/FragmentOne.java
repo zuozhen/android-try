@@ -22,6 +22,8 @@ import net.rdrei.android.dirchooser.DirectoryChooserActivity;
 import net.rdrei.android.dirchooser.DirectoryChooserConfig;
 
 import java.io.File;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 /**
  * A placeholder fragment containing a simple view.
@@ -29,13 +31,14 @@ import java.io.File;
 public class FragmentOne extends Fragment implements View.OnClickListener {
 
     private static EditText etSrcFolder, etDstFolder;
-    private Button btBrowseSrc, btBrowseDst, btDelete, btCopy;
+    private Button btBrowseSrc, btBrowseDst, btDelete, btCopy, btLink;
     private static SharedPreferences sharedPref;
 
     private static final String ARG_SECTION_NUMBER = "section_number";
     private static final int REQUEST_SRC_DIRECTORY = 0;
     private static final int REQUEST_DST_DIRECTORY = 1;
     private static final String TAG = "DirChooserSample";
+    private static final String SP = "directory";
 
     /**
      * From the Fragment documentation: Every fragment must have an empty constructor,
@@ -65,7 +68,7 @@ public class FragmentOne extends Fragment implements View.OnClickListener {
 
         etSrcFolder = (EditText) rootView.findViewById(R.id.editText);
         etDstFolder = (EditText) rootView.findViewById(R.id.editText2);
-        sharedPref = getActivity().getPreferences(Context.MODE_PRIVATE);
+        sharedPref = getActivity().getSharedPreferences(SP, Context.MODE_PRIVATE);
         String srcFolder = sharedPref.getString("srcFolder", getString(R.string.folder_hint));
         String dstFolder = sharedPref.getString("dstFolder", getString(R.string.folder_hint));
         etSrcFolder.setText(srcFolder);
@@ -79,6 +82,8 @@ public class FragmentOne extends Fragment implements View.OnClickListener {
         btDelete.setOnClickListener(this);
         btCopy = (Button) rootView.findViewById(R.id.button_copy);
         btCopy.setOnClickListener(this);
+        btLink = (Button) rootView.findViewById(R.id.button_link);
+        btLink.setOnClickListener(this);
 
         return rootView;
     }
@@ -110,15 +115,18 @@ public class FragmentOne extends Fragment implements View.OnClickListener {
                 chooseDirectory(v);
                 break;
             case R.id.button_delete:
-                deleteContent(v);
+                deleteContent();
                 break;
             case R.id.button_copy:
-                copyContent(v);
+                copyContent();
+                break;
+            case R.id.button_link:
+                linkDirectory();
                 break;
         }
     }
 
-    public void chooseDirectory(View view) {
+    private void chooseDirectory(View view) {
         final Intent chooserIntent = new Intent(
                 getContext(),
                 DirectoryChooserActivity.class);
@@ -142,6 +150,7 @@ public class FragmentOne extends Fragment implements View.OnClickListener {
         }
     }
 
+    //this method will not invoked if onActivityResult also in activity which contains this fragment...
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
@@ -164,12 +173,11 @@ public class FragmentOne extends Fragment implements View.OnClickListener {
         }
     }
 
-    public void deleteContent(View view) {
+    private void deleteContent() {
         File dstFolder = new File(etDstFolder.getText().toString());
 
         try {
             for (File f : dstFolder.listFiles()) {
-//            Log.i("ZZ", f.getAbsolutePath());
                 deleteContent(f);
             }
             Toast.makeText(getActivity(), getString(R.string.result_ok), Toast.LENGTH_SHORT).show();
@@ -182,13 +190,48 @@ public class FragmentOne extends Fragment implements View.OnClickListener {
         if (fileOrDir.isDirectory())
             for (File f : fileOrDir.listFiles()) {
                 if (!f.delete())
-                    Log.i("ZZ", String.format("Delete file: %s", f.getName()));
+                    Log.i("ZZ", String.format("Delete file fail: %s", f.getName()));
             }
         if (!fileOrDir.delete())
-            Log.i("ZZ", String.format("Delete dir: %s", fileOrDir.getName()));
+            Log.i("ZZ", String.format("Delete dir fail: %s", fileOrDir.getName()));
     }
 
-    public void copyContent(View view) {
+    private void copyContent() {
         new AsyncTaskCopy(getActivity()).execute(etSrcFolder.getText().toString(), etDstFolder.getText().toString());
+    }
+
+    private void linkDirectory() {
+        /*
+        Os.symlink(str, str) need SDK21. Or use reflect to call symlink. or use ndk.
+        But all seems need ROOT permission to perform...
+         */
+
+        try {
+            Process suProcess = Runtime.getRuntime().exec("su");
+        } catch (Exception e) {
+            Toast.makeText(getContext(), "Need Root Permission", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        /* method 1, SDK21
+        try {
+            Os.symlink(etSrcFolder.getText().toString(), etDstFolder.getText().toString() + "/ln");
+            Toast.makeText(getActivity(), getString(R.string.result_ok), Toast.LENGTH_SHORT).show();
+        } catch (Exception e) {
+            e.printStackTrace();
+            Toast.makeText(getContext(), getString(R.string.result_er), Toast.LENGTH_SHORT).show();
+        }
+        */
+
+        try {
+            final Class<?> libcore = Class.forName("libcore.io.Libcore");
+            final Field fOs = libcore.getDeclaredField("os");
+            fOs.setAccessible(true);
+            final Object os = fOs.get(null);
+            final Method method = os.getClass().getMethod("symlink", String.class, String.class);
+            method.invoke(os, etSrcFolder.getText().toString(), etDstFolder.getText().toString()+"/ln");
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
